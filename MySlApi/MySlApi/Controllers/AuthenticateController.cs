@@ -7,7 +7,7 @@
     using MySlApi.Core;
     using MySlApi.Models;
 
-    public class AuthenticationController : ApiController
+    public class AuthenticateController : ApiController
     {
         public async Task<AuthenticateResponseModel> Post(AuthenticateRequestModel requestModel)
         {
