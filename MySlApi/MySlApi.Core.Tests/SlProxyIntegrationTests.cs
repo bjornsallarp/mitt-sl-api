@@ -43,7 +43,7 @@
             }
 
             // Arrange
-            var proxy = new SlScreenScraper(IntegrationTestsCredentials.Username, IntegrationTestsCredentials.Password);
+            var proxy = new SlScreenScraper("fakeusername", "fakepassword");
 
             // Act
             var wasSucessful = await proxy.Authenticate();
