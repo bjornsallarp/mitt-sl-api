@@ -1,0 +1,1 @@
+git update-index --assume-unchanged MySlApi.Core.Tests/IntegrationTestsCredentials.cs
