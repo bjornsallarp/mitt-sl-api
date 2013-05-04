@@ -40,6 +40,9 @@
     <Reference Include="FluentAssertions">
       <HintPath>..\packages\FluentAssertions.2.0.1\lib\net45\FluentAssertions.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.5.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Xml" />
@@ -60,8 +63,9 @@
   <ItemGroup>
     <Compile Include="Helpers\ResourceFileHelper.cs" />
     <Compile Include="IntegrationTestsCredentials.cs" />
-    <Compile Include="ScreenScrapers\CardsPageScraperTests.cs" />
-    <Compile Include="ScreenScrapers\LoginPageScraperTests.cs" />
+    <Compile Include="JsonDtoTests\TravelCardResponseTests.cs" />
+    <Compile Include="JsonDtoTests\AuthenticationResponseTests.cs" />
+    <Compile Include="JsonDtoTests\TravelCardListResponseTests.cs" />
     <Compile Include="SlProxyIntegrationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -75,13 +79,12 @@
     <None Include="app.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <EmbeddedResource Include="Json\TravelCardResponse.json" />
+    <EmbeddedResource Include="Json\AuthenticationResponse.json" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Html\Cards.html" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Html\Login.html" />
+    <EmbeddedResource Include="Json\TravelCardListResponse.json" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

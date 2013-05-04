@@ -32,8 +32,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="HtmlAgilityPack">
-      <HintPath>..\packages\HtmlAgilityPack.1.4.6\lib\Net45\HtmlAgilityPack.dll</HintPath>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.5.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -47,9 +47,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Entities\AccessCard.cs" />
+    <Compile Include="Entities\AuthenticationResult.cs" />
     <Compile Include="Entities\Ticket.cs" />
-    <Compile Include="ScreenScrapers\CardsPageScraper.cs" />
-    <Compile Include="ScreenScrapers\LoginPageScraper.cs" />
+    <Compile Include="Extensions\HttpContentExtionsions.cs" />
+    <Compile Include="JsonDto\TravelCardListResponse.cs" />
+    <Compile Include="JsonDto\AuthenticationRequest.cs" />
+    <Compile Include="JsonDto\AuthenticationResponse.cs" />
+    <Compile Include="JsonDto\ResultDataResponse.cs" />
+    <Compile Include="JsonDto\TravelCardResponse.cs" />
     <Compile Include="SlScreenScraper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

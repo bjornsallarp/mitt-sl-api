@@ -14,7 +14,7 @@
     public class SlProxyIntegrationTests
     {
         [TestMethod]
-        public async Task AuthenticationShouldReturnTrueWithCorrectCredentials()
+        public async Task AuthenticationShouldReturnCookiesAndPartyRefWithCorrectCredentials()
         {
             if ("Test" == ConfigurationManager.AppSettings["Environment"])
             {
@@ -26,15 +26,16 @@
             var proxy = new SlScreenScraper(IntegrationTestsCredentials.Username, IntegrationTestsCredentials.Password);
 
             // Act
-            var wasSucessful = await proxy.Authenticate();
+            var result = await proxy.Authenticate();
 
             // Assert
-            wasSucessful.Should().BeTrue();
+            result.Authenticated.Should().BeTrue();
+            result.PartyRef.Should().NotBeNull();
             proxy.GetCookieHeader().Should().NotBeNullOrEmpty();
         }
 
         [TestMethod]
-        public async Task AuthenticationShouldReturnFalseWithInvalidCredentials()
+        public async Task AuthenticationShouldFailWithInvalidCredentials()
         {
             if ("Test" == ConfigurationManager.AppSettings["Environment"])
             {
@@ -46,10 +47,11 @@
             var proxy = new SlScreenScraper("fakeusername", "fakepassword");
 
             // Act
-            var wasSucessful = await proxy.Authenticate();
+            var result = await proxy.Authenticate();
 
             // Assert
-            wasSucessful.Should().BeFalse();
+            result.Authenticated.Should().BeFalse();
+            result.PartyRef.Should().BeNullOrEmpty();
         }
 
         [TestMethod]
@@ -65,13 +67,13 @@
             var proxy = new SlScreenScraper(IntegrationTestsCredentials.Username, IntegrationTestsCredentials.Password);
 
             // Act
-            var isAuthenticated = await proxy.Authenticate();
+            var authenticationResult = await proxy.Authenticate();
             
             List<AccessCard> cards = null;
 
-            if (isAuthenticated)
+            if (authenticationResult.Authenticated)
             {
-                cards = await proxy.GetAccessCards();
+                cards = await proxy.GetAccessCards(authenticationResult.PartyRef);
             }
 
             // Assert
@@ -97,10 +99,10 @@
             SlScreenScraper cookieAuthScraper;
 
             // Act
-            await authScraper.Authenticate();
+            var authResult = await authScraper.Authenticate();
             cookieAuthScraper = new SlScreenScraper(authScraper.GetCookieHeader());
 
-            var cards = await cookieAuthScraper.GetAccessCards();
+            var cards = await cookieAuthScraper.GetAccessCards(authResult.PartyRef);
 
             // Assert
             cards.Should().NotBeNull();

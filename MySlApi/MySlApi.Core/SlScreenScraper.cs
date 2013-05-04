@@ -5,12 +5,14 @@
     using System.Linq;
     using System.Net;
     using System.Net.Http;
-    using System.Security.Authentication;
+    using System.Text;
     using System.Threading.Tasks;
-    using System.Web;
 
     using MySlApi.Core.Entities;
-    using MySlApi.Core.ScreenScrapers;
+    using MySlApi.Core.Extensions;
+    using MySlApi.Core.JsonDto;
+
+    using Newtonsoft.Json;
 
     public class SlScreenScraper
     {
@@ -25,13 +27,14 @@
             var handler = new HttpClientHandler
                               {
                                   CookieContainer = this.Cookies,
-                                  AllowAutoRedirect = false
+                                  AllowAutoRedirect = false,
+                                  AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
                               };
 
-            this.HttpClient = new HttpClient(handler);
-            this.HttpClient.BaseAddress = new Uri(BaseAddress);
+            this.HttpClient = new HttpClient(handler) { BaseAddress = new Uri(BaseAddress) };
             this.HttpClient.DefaultRequestHeaders.Add("User-Agent", UserAgent);
             this.HttpClient.DefaultRequestHeaders.Add("Accept", "text/html, application/xhtml+xml, */*");
+            this.HttpClient.DefaultRequestHeaders.Add("Accept-Encoding", "gzip,deflate");
         }
 
         public SlScreenScraper(string username, string password) 
@@ -45,7 +48,10 @@
         public SlScreenScraper(string cookies) 
             : this()
         {
-            this.Cookies.SetCookies(this.HttpClient.BaseAddress, cookies);
+            foreach (string cookie in cookies.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                this.Cookies.SetCookies(this.HttpClient.BaseAddress, cookie);         
+            }
         }
 
         public SlScreenScraper(CookieContainer cookies)
@@ -65,69 +71,98 @@
 
         public HttpClient HttpClient { get; set; }
 
-        public async Task<bool> Authenticate()
+        public async Task<AuthenticationResult> Authenticate()
         {
             const string LoginPath = "/sv/Resenar/Mitt-SL/Mitt-SL/";
 
             var loginPageResponse = await this.HttpClient.GetAsync(LoginPath).ConfigureAwait(false);
 
-            if (loginPageResponse.IsSuccessStatusCode)
+            if (!loginPageResponse.IsSuccessStatusCode)
             {
-                var loginPageHtml = await loginPageResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
-                var parser = new LoginPageScraper(loginPageHtml);
+                return new AuthenticationResult();
+            }
 
-                var parameters = parser.ScrapePostParameters();
-                parameters.Add(new[] { "ctl00$MainContentRegion$MainBodyRegion$UserLogIn$UsernameBox", this.Username });
-                parameters.Add(new[] { "ctl00$MainContentRegion$MainBodyRegion$UserLogIn$PasswordBox", this.Password });
-                parameters.Add(new[] { "ctl00$MainContentRegion$MainBodyRegion$UserLogIn$btnLogin", "Logga in" });
-                parameters.Add(new[] { "ctl00$HelperMenu$iptSearch", string.Empty });
+            var postData = new AuthenticationRequest(this.Username, this.Password);
+            var req = new HttpRequestMessage(HttpMethod.Post, "/ext/mittsl/api/authenticate.json");
+            req.Content = new StringContent(JsonConvert.SerializeObject(postData), Encoding.UTF8, "application/json");
 
-                var post = await this.HttpClient.PostAsync(LoginPath, this.PostParametersToPostData(parameters)).ConfigureAwait(false);
+            var post = await this.HttpClient.SendAsync(req).ConfigureAwait(false);
 
-                if (post.StatusCode == HttpStatusCode.Found && post.Headers.Location != null
-                    && post.Headers.Location.AbsolutePath == "/sv/Resenar/Mitt-SL/MittSL-Oversikt/")
+            if (post.StatusCode == HttpStatusCode.OK)
+            {
+                var response = await post.Content.ReadJsonAsTypeAsync<ResultDataResponse<AuthenticationResponse>>();
+
+                if (!string.IsNullOrEmpty(response.Result.Session.PartyRef.Ref))
                 {
-                    return true;
+                    return new AuthenticationResult
+                               {
+                                   Authenticated = true,
+                                   PartyRef = response.Result.Session.PartyRef.Ref
+                               };
                 }
             }
         
-            return false;
+            return new AuthenticationResult();
         }
 
-        public async Task<List<AccessCard>> GetAccessCards()
+        public async Task<List<AccessCard>> GetAccessCards(string partyRef)
         {
-            if (this.Cookies.Count == 0)
+            string cardsPath = "/ext/mittsl/api/travel_card.json?queryproperty=owner.ref&value=" + partyRef;
+
+            var cardsPageResponse = await this.HttpClient.GetAsync(cardsPath).ConfigureAwait(false);
+
+            if (!cardsPageResponse.IsSuccessStatusCode)
             {
-                throw new AuthenticationException("You need to authenticate before getting access cards!");
+                throw new HttpRequestException("Request faild, response code: " + cardsPageResponse.StatusCode);                
             }
 
-            const string CardsPath = "/sv/Resenar/Mitt-SL/SL-Accesskort1/";
+            var cards = await cardsPageResponse.Content.ReadJsonAsTypeAsync<ResultDataResponse<TravelCardListResponse>>();
 
-            var cardsPageResponse = await this.HttpClient.GetAsync(CardsPath).ConfigureAwait(false);
+            var accessCards = new List<AccessCard>();
 
-            if (cardsPageResponse.IsSuccessStatusCode)
+            foreach (var card in cards.Result.Cards)
             {
-                var cardsPageHtml = await cardsPageResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var cardDetailsUrl = "/ext/mittsl/api/" + card.Card.Href + ".json";
+                var detailsResponse = await this.HttpClient.GetAsync(cardDetailsUrl);
+                var details = await detailsResponse.Content.ReadJsonAsTypeAsync<ResultDataResponse<TravelCardResponse>>();
 
-                var scraper = new CardsPageScraper(cardsPageHtml);
-                return scraper.ScrapeAllCards();
+                var travelCard = details.Result.TravelCard;
+
+                var accessCard = new AccessCard
+                                     {
+                                         Blocked = travelCard.Blocked,
+                                         BlockedAt = travelCard.BlockedDate,
+                                         CardNumber = travelCard.SerialNumber,
+                                         Name = travelCard.Name,
+                                         CardStatus = travelCard.Details.Status,
+                                         ExpireDate = travelCard.Details.ExpireDate,
+                                         PurseBalance = travelCard.Details.PurseValue,
+                                         PurseBlocked = travelCard.Details.PurseBlocked
+                                     };
+
+                if (travelCard.Products != null)
+                {
+                    accessCard.Tickets =
+                        travelCard.Products.Select(product => new Ticket
+                                                                  {
+                                                                      Name = product.ProductType,
+                                                                      Active = product.Active,
+                                                                      Blocked = product.Blocked,
+                                                                      Expires = product.EndDate,
+                                                                      Price = product.ProductPrice,
+                                                                      ValidFrom = product.StartDate
+                                                                  }).ToList();
+                }
+
+                accessCards.Add(accessCard);
             }
-            
-            throw new HttpRequestException("Request faild, response code: " + cardsPageResponse.StatusCode);
+
+            return accessCards;
         }
 
         public string GetCookieHeader()
         {
             return this.Cookies.GetCookieHeader(this.HttpClient.BaseAddress);
-        }
-
-        private StringContent PostParametersToPostData(IEnumerable<string[]> postParameters)
-        {
-            var postString = string.Join(
-                "&", postParameters.Select(strings => strings[0] + "=" + HttpUtility.UrlEncode(strings[1])));
-
-            var content = new StringContent(postString, System.Text.Encoding.UTF8, "application/x-www-form-urlencoded");
-            return content;
         }
     }
 }

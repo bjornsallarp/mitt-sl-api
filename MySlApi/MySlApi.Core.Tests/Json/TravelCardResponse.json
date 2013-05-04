@@ -1,0 +1,64 @@
+﻿{
+    "result_data": {
+        "travel_card": {
+            "href": "travel_card/000001",
+            "rdesc": "999999999",
+            "serial_number": "999999999",
+            "name": "Björns kort",
+            "blocked": false,
+            "replaced_by_serial_number": null,
+            "replaced_serial_number": null,
+            "detail": {
+                "card_status": "ISSUED",
+                "blocked": false,
+                "blocked_at": null,
+                "card_serial_number": "999999999",
+                "expire_date": "2019-03-06T00:00:00+00:00",
+                "purse_value": 75,
+                "purse_blocked": false,
+                "load_request_on_purse": false,
+                "product1": null,
+                "product2": null,
+                "product3": null,
+                "replaced_by_serial_number": null,
+                "replaced_serial_number": null,
+                "products": [
+                    {
+                        "href": "travel_card/000001/detail/products/1",
+                        "rdesc": "ticket_account_reference/000001/detail/products/1",
+                        "blocked": false,
+                        "end_date": "2013-05-09T00:00:00+00:00",
+                        "product_id": "3",
+                        "product_type": "30-dagarsbiljett  Helt",
+                        "product_price": 790,
+                        "start_date": "2013-04-10T00:00:00+00:00",
+                        "zones": null,
+                        "routes": null,
+                        "active": true
+                    }
+                ]
+            },
+            "products": [
+                {
+                    "href": "travel_card/000001/products/1",
+                    "rdesc": "ticket_account_reference/000001/products/1",
+                    "blocked": false,
+                    "end_date": "2013-05-09T00:00:00+00:00",
+                    "product_id": "3",
+                    "product_type": "30-dagarsbiljett  Helt",
+                    "product_price": 790,
+                    "start_date": "2013-04-10T00:00:00+00:00",
+                    "zones": null,
+                    "routes": null,
+                    "active": true
+                }
+            ],
+            "replaced_date": null,
+            "blocked_date": null,
+            "owner": {
+                "ref": "private_customer/999999",
+                "description": "Björn Sållarp (999999)"
+            }
+        }
+    }
+}

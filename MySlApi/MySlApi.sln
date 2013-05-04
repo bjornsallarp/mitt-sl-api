@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MySlApi", "MySlApi\MySlApi.csproj", "{AF2446E3-6627-4635-BF5E-B7CDD201893E}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MySlApi.Tests", "MySlApi.Tests\MySlApi.Tests.csproj", "{5FD98195-BBBB-48BE-B2EC-D09AF0ED34C9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{081248B4-2325-49B7-8871-26C05FFFE88B}"
@@ -16,16 +14,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MySlApi.Core", "MySlApi.Cor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MySlApi.Core.Tests", "MySlApi.Core.Tests\MySlApi.Core.Tests.csproj", "{F11CA8C4-5F95-4AA9-9C00-1F9F448B3289}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MySlApi", "MySlApi\MySlApi.csproj", "{AF2446E3-6627-4635-BF5E-B7CDD201893E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{AF2446E3-6627-4635-BF5E-B7CDD201893E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AF2446E3-6627-4635-BF5E-B7CDD201893E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AF2446E3-6627-4635-BF5E-B7CDD201893E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AF2446E3-6627-4635-BF5E-B7CDD201893E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5FD98195-BBBB-48BE-B2EC-D09AF0ED34C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5FD98195-BBBB-48BE-B2EC-D09AF0ED34C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5FD98195-BBBB-48BE-B2EC-D09AF0ED34C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -38,6 +34,10 @@ Global
 		{F11CA8C4-5F95-4AA9-9C00-1F9F448B3289}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F11CA8C4-5F95-4AA9-9C00-1F9F448B3289}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F11CA8C4-5F95-4AA9-9C00-1F9F448B3289}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF2446E3-6627-4635-BF5E-B7CDD201893E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF2446E3-6627-4635-BF5E-B7CDD201893E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF2446E3-6627-4635-BF5E-B7CDD201893E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF2446E3-6627-4635-BF5E-B7CDD201893E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

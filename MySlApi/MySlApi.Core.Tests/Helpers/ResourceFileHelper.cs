@@ -6,10 +6,10 @@
 
     public static class ResourceFileHelper
     {
-        public static string GetHtmlFile(string name)
+        public static string GetJsonFile(string name)
         {
             var assembly = Assembly.GetExecutingAssembly();
-            using (var stream = assembly.GetManifestResourceStream("MySlApi.Core.Tests.Html." + name))
+            using (var stream = assembly.GetManifestResourceStream("MySlApi.Core.Tests.Json." + name))
             {
                 if (stream == null)
                 {

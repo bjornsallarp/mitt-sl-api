@@ -1,0 +1,48 @@
+﻿{
+    "result_data": {
+        "travel_card_list": [
+            {
+                "travel_card": {
+                    "href": "travel_card/999999",
+                    "rdesc": "999999999",
+                    "serial_number": "999999999",
+                    "name": "Annas kort",
+                    "blocked": false,
+                    "replaced_by_serial_number": null,
+                    "replaced_serial_number": null,
+                    "detail": null,
+                    "replaced_date": null,
+                    "blocked_date": "1899-12-31T23:00:00+00:00",
+                    "owner": {
+                        "ref": "private_customer/999999",
+                        "description": "Björn Sållarp (999999)"
+                    }
+                }
+            },
+            {
+                "travel_card": {
+                    "href": "travel_card/888888",
+                    "rdesc": "888888888",
+                    "serial_number": "888888888",
+                    "name": "Björns kort",
+                    "blocked": false,
+                    "replaced_by_serial_number": null,
+                    "replaced_serial_number": null,
+                    "detail": null,
+                    "replaced_date": null,
+                    "blocked_date": "1899-12-31T23:00:00+00:00",
+                    "owner": {
+                        "ref": "private_customer/888888",
+                        "description": "Björn Sållarp (888888)"
+                    }
+                }
+            }
+        ],
+        "_meta_": {
+            "skip": 0,
+            "limit": 100,
+            "sort": null,
+            "total_count": 2
+        }
+    }
+}
